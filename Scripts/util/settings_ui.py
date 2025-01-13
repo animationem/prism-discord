@@ -77,11 +77,7 @@ class SettingsUI:
         l_notify_method_help.setToolTip("""<p style='line-height:1;'>
                                         <span style='color:DodgerBlue;'><b>Direct</b></span>: Notify the selected user by Direct message<br>
                                         <br>
-                                        <span style='color:Tomato;'><b>Channel</b></span>: Notify selected user in the Discord Channel<br>
-                                        <br>
-                                        <span style='color:MediumSeaGreen;'><b>Ephemeral Direct</b></span>: Notify the selected user in an ephemeral Direct message<br>
-                                        <br>
-                                        <span style='color:MediumSlateBlue;'><b>Ephemeral Channel</b></span>: Notify selected user in an ephemeral Channel message<br>
+                                        <span style='color:Tomato;'><b>Channel</b></span>: Notify selected user in the Discord Channel
                                         </p>""")
 
         lo_notify_method.addWidget(l_notify_method)
