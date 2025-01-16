@@ -31,6 +31,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Prism.  If not, see <https://www.gnu.org/licenses/>.
 
+import os
 
 from qtpy.QtCore import *
 from qtpy.QtGui import *
@@ -44,7 +45,30 @@ class Prism_Discord_Functions(object):
         self.core = core
         self.plugin = plugin
 
+        self.core.registerCallback(
+            "mediaPlayerContextMenuRequested",
+            self.mediaPlayerContextMenuRequested,
+            plugin=self,
+        )
+
     # if returns true, the plugin will be loaded by Prism
     @err_catcher(name=__name__)
     def isActive(self):
         return True
+
+    @err_catcher(name=__name__)
+    def mediaPlayerContextMenuRequested(self, origin, menu):
+        discord_action = QAction("Publish to Discord", origin)
+
+        iconPath = os.path.join(
+            self.pluginDirectory, "Resources", "discord-mark-blue.svg"
+        )
+        icon = self.core.media.getColoredIcon(iconPath)
+
+        discord_action.triggered.connect(lambda: self.publishToDiscord())
+        menu.insertAction(menu.actions()[-1], discord_action)
+        discord_action.setIcon(icon)
+
+    @err_catcher(name=__name__)
+    def publishToDiscord(self):
+        print("Publishing to Discord")
