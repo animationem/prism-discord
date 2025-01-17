@@ -20,23 +20,18 @@ class Prism_Discord_externalAccess_Functions(object):
         self.plugin = plugin
         self.settings_ui = SettingsUI(self.core)
 
-        if self.isStudioLoaded() is not None:
-            self.core.registerCallback(
-                "studioSettings_loadSettings",
-                self.studioSettings_loadSettings,
-                plugin=self,
-            )
-        else:
-            self.core.registerCallback(
-                "onPluginsLoaded", self.onPluginsLoaded, plugin=self
-            )
+        self.core.registerCallback(
+            "projectSettings_loadUI",
+            self.projectSettings_loadUI,
+            plugin=self,
+        )
 
     @err_catcher(name=__name__)
     def onPluginsLoaded(self):
         if self.isStudioLoaded() is not None:
             self.core.registerCallback(
-                "studioSettings_loadSettings",
-                self.studioSettings_loadSettings,
+                "projectSettings_loadUI",
+                self.projectSettings_loadUI,
                 plugin=self,
             )
         else:
