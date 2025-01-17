@@ -34,17 +34,9 @@
 
 from Prism_Discord_Variables import Prism_Discord_Variables
 from Prism_Discord_Functions import Prism_Discord_Functions
-from Prism_Discord_externalAccess_Functions import (
-    Prism_Discord_externalAccess_Functions,
-)
 
 
-class Prism_Discord(
-    Prism_Discord_Variables,
-    Prism_Discord_Functions,
-    Prism_Discord_externalAccess_Functions,
-):
+class Prism_Discord(Prism_Discord_Variables, Prism_Discord_Functions):
     def __init__(self, core):
         Prism_Discord_Variables.__init__(self, core, self)
         Prism_Discord_Functions.__init__(self, core, self)
-        Prism_Discord_externalAccess_Functions.__init__(self, core, self)
