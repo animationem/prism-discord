@@ -60,6 +60,12 @@ class Prism_Discord_Functions(object):
     def mediaPlayerContextMenuRequested(self, origin, menu):
         discord_action = QAction("Publish to Discord", origin)
 
+        self.content = origin.seq[0]
+        self.identifier = origin.origin.getCurrentIdentifier()["identifier"]
+        self.sequence = None
+        self.shot = None
+        self.version = None
+
         iconPath = os.path.join(
             self.pluginDirectory, "Resources", "discord-mark-blue.svg"
         )
