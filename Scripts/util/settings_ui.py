@@ -69,7 +69,7 @@ class SettingsUI:
         gb_notifications.setLayout(lo_notifications)
 
         lo_notify_method = QHBoxLayout()
-        l_notify_method = QLabel("Notification Method:")
+        l_notify_method = QLabel("Method:")
         cb_notify_method = QComboBox()
         origin.cb_notify_method = cb_notify_method
 
@@ -84,7 +84,27 @@ class SettingsUI:
         lo_notify_method.addWidget(origin.cb_notify_method)
         lo_notify_method.addWidget(l_notify_method_help)
         lo_notify_method.addStretch()
+
+        lo_notify_user_pool = QHBoxLayout()
+        l_notify_user_pool = QLabel("User Pool:")
+        cb_notify_user_pool = QComboBox()
+        l_notify_user_pool_help = self.grabHelpIcon()
+        l_notify_user_pool_help.setToolTip("""<p style='line-height:1;'>
+                                        <span style='color:DodgerBlue;'><b>Discord</b></span>: Grab users from the Discord User pool<br>
+                                        <br>
+                                        <span style='color:Tomato;'><b>Prism Studio*</b></span>: Grab users from the Prism Studio User pool<br>
+                                        <br>
+                                        <i>* This option is not currently available. Will implement in the future.</i>
+                                        </p>""")
+        origin.cb_notify_user_pool = cb_notify_user_pool
+
+        lo_notify_user_pool.addWidget(l_notify_user_pool)
+        lo_notify_user_pool.addWidget(origin.cb_notify_user_pool)
+        lo_notify_user_pool.addWidget(l_notify_user_pool_help)
+        lo_notify_user_pool.addStretch()
+
         lo_notifications.addLayout(lo_notify_method)
+        lo_notifications.addLayout(lo_notify_user_pool)
 
         lo_discord.addWidget(gb_notifications)
         lo_discord.setAlignment(gb_notifications, Qt.AlignTop)
@@ -125,21 +145,25 @@ class SettingsUI:
         lo_machine.addWidget(l_machine_value)
 
         lo_discord_server_name = QHBoxLayout()
+        l_discord_server_name = QLabel("Server Name:")
         le_discord_server = QLineEdit()
         le_discord_server.setPlaceholderText("Enter your Discord Server Name")
+        origin.le_discord_server = le_discord_server
         l_discord_server_help = self.grabHelpIcon()
         l_discord_server_help.setToolTip("""<p style='line-height:1;'>
                                 Enter your Discord Server Name<br><br>
                                 
                                 Note: Because the app can theoretically be installed on multiple servers, you need to specify which server you are trying to connect to.
                                 </p>""")
-        lo_discord_server_name.addWidget(le_discord_server)
+        lo_discord_server_name.addWidget(l_discord_server_name)
+        lo_discord_server_name.addWidget(origin.le_discord_server)
         lo_discord_server_name.addWidget(l_discord_server_help)
 
         lo_save_server = QHBoxLayout()
         lo_save_server.addStretch()
         b_save_server_name = QPushButton("Save")
-        lo_save_server.addWidget(b_save_server_name)
+        origin.b_save_server_name = b_save_server_name
+        lo_save_server.addWidget(origin.b_save_server_name)
         lo_save_server.addStretch()
 
         lo_server.addLayout(lo_status)
