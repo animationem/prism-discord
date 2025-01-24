@@ -87,7 +87,7 @@ class Prism_Discord_Functions(object):
         print("Publishing to Discord")
 
 
-        token = "MTMyNjMzNDUwNzg5MjA4NDgzOA.GZJ3_3.ooMJ59z1OR83BB_gU5q-VOx9AdwJcpVMVE8iuk"
+        token = None #Get the Access Token from the configuration file
 
         #-----------------Get Guild ID -----------------
         url = "https://discord.com/api/v10/users/@me/guilds"
