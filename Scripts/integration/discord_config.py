@@ -31,40 +31,36 @@ class DiscordConfig:
 
     @err_catcher(name=__name__)
     def loadConfig(self, mode):
-        if mode == "user":
-            config = self.getUserConfig()
-            with open(config, "r") as f:
-                return json.load(f)
-
-        elif mode == "studio":
-            config = self.getStudioConfig()
-        else:
-            self.core.popup("Cannot retrieve the configuration file")
-            return
-
         try:
-            if not os.path.exists(config):
-                os.makedirs(os.path.dirname(config), exist_ok=True)
+            if mode == "user":
+                config = self.getUserConfig()
+                with open(config, "r") as f:
+                    return json.load(f)
+            else:
+                config = self.getStudioConfig()
+
+            config_dir = os.path.dirname(config)
+            if not os.path.exists(config_dir):
+                os.makedirs(config_dir, exist_ok=True)
                 with open(config, "w") as f:
                     json.dump({"discord": {"token": ""}}, f, indent=4)
 
             with open(config, "r") as f:
                 return json.load(f)
 
-        except:
-            self.core.popup("Cannot load the configuration file")
+        except Exception:
+            import traceback
+            error_message = traceback.format_exc()
+            self.core.popup(f"Cannot load the configuration file: {error_message}")
 
     @err_catcher(name=__name__)
     def saveConfigSetting(self, setting, mode):
-        if mode == "user":
-            config = self.getUserConfig()
-        elif mode == "studio":
-            config = self.getStudioConfig()
-        else:
-            self.core.popup("Cannot retrieve the configuration file")
-            return
+        try: 
+            if mode == "user":
+                config = self.getUserConfig()
+            else:
+                config = self.getStudioConfig()
 
-        try:
             with open(config, "w") as f:
                 json.dump(setting, f, indent=4)
         except:
@@ -72,24 +68,29 @@ class DiscordConfig:
 
     @err_catcher(name=__name__)
     def checkDiscordOptionsInConfig(self, config):
+        discord_defaults = {
+            "token": "",
+            "notifications": {
+            "method": "",
+            "user_pool": ""
+            },
+            "server": {
+            "status": "",
+            "machine": "",
+            "guild_name": ""
+            }
+        }
+
         if "discord" not in config:
-            config["discord"] = {}
-        if "token" not in config["discord"]:
-            config["discord"]["token"] = ""
-        if "notifications" not in config["discord"]:
-            config["discord"]["notifications"] = {}
-        if "method" not in config["discord"]["notifications"]:
-            config["discord"]["notifications"]["method"] = ""
-        if "user_pool" not in config["discord"]["notifications"]:
-            config["discord"]["notifications"]["user_pool"] = ""
-        if "server" not in config["discord"]:
-            config["discord"]["server"] = {}
-        if "status" not in config["discord"]["server"]:
-            config["discord"]["server"]["status"] = ""
-        if "machine" not in config["discord"]["server"]:
-            config["discord"]["server"]["machine"] = ""
-        if "guild_name" not in config["discord"]["server"]:
-            config["discord"]["server"]["guild_name"] = ""
+            config["discord"] = discord_defaults
+        else:
+            for key, value in discord_defaults.items():
+                if key not in config["discord"]:
+                    config["discord"][key] = value
+                elif isinstance(value, dict):
+                    for sub_key, sub_value in value.items():
+                        if sub_key not in config["discord"][key]:
+                            config["discord"][key][sub_key] = sub_value
 
         # Save updated config
         self.saveConfigSetting(config, "studio")
