@@ -32,6 +32,9 @@
 # along with Prism.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
+import requests
+import json
+
 
 from qtpy.QtCore import *
 from qtpy.QtGui import *
@@ -78,3 +81,70 @@ class Prism_Discord_Functions(object):
     @err_catcher(name=__name__)
     def publishToDiscord(self):
         print("Publishing to Discord")
+
+
+        token = "MTMyNjMzNDUwNzg5MjA4NDgzOA.GF8A9q.I4wzPlDcrqBew3aRsTzdvfPksUIEEf3NIAEQA8"
+
+        #-----------------Get Guild ID -----------------
+        url = "https://discord.com/api/v10/users/@me/guilds"
+        headers = {"Authorization": f"Bot {token}"}
+
+        response = requests.get(url, headers=headers)
+        data = response.json()
+
+        for d in data:
+            if d["name"] == "Prism for Discordo":
+                guild_id = d["id"]
+
+        print(f"Guild Name: Prism for Discordo Guild ID: {guild_id}")
+
+        #-----------------Get Channel ID -----------------
+        url = f"https://discord.com/api/v10/guilds/{guild_id}/channels"
+        response = requests.get(url, headers=headers)
+        data = response.json()
+
+        for d in data:
+            if d.get("name") == "Text Channels":
+                t_id = d["id"]
+            
+            if d.get("name") == "test" and d.get("parent_id") == t_id:
+                channel_id = d["id"]
+
+        print(f"Channel Name: Test Channel ID: {channel_id}")
+
+        #-----------------Send Message -----------------
+        url = f"https://discord.com/api/v10/channels/{channel_id}/messages"
+        headers = {"Authorization": f"Bot {token}"}
+
+        # Prep File
+        file_path = "C:/Users/jessi/OneDrive/Desktop/New folder/lodi2.jpg"
+        files = {'file': open(file_path, 'rb')}
+
+
+
+        # Prep payload with an embed
+        payload = {
+            "content": "hey",
+            "embeds": [
+                {
+                    "title": project_name,  # Use the project name as the title
+                    "image": {
+                        "url": "attachment://lodi2.jpg"
+                    },
+                    "description": "ur cooked\nDimensions: {}x{}".format(width, height),
+                    "color": 16711680,
+                }
+            ]
+        }
+
+        response = requests.post(url, headers=headers, files=files, data={"payload_json": json.dumps(payload)})
+
+        # Print the response
+        print(response.status_code)
+        print(response.json())
+
+        # Check if the message was sent successfully
+        if response.status_code == 200:
+            print("Message sent successfully to Discord!")
+        else:
+            print("Failed to send message to Discord.")
