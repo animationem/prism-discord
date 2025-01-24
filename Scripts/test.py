@@ -5,7 +5,7 @@ import os
 
 from pprint import pprint
 
-token = "MTMyNjMzNDUwNzg5MjA4NDgzOA.GF8A9q.I4wzPlDcrqBew3aRsTzdvfPksUIEEf3NIAEQA8"
+token = None
 
 #-----------------Get Guild ID -----------------
 url = "https://discord.com/api/v10/users/@me/guilds"
