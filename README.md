@@ -6,7 +6,7 @@
   
 <div>
 <img src="https://img.shields.io/badge/Prism_Pipeline-2.0.14-mediumseagreen" alt="Prism Pipeline Version"> 
-<img src="https://img.shields.io/badge/discord_Plugin-2.0.14-4A154B?logo=discord" alt="discord Plugin Version">
+<img src="https://img.shields.io/badge/discord_Plugin-2.0.14-4A154B?logo=discord" alt="Discord Plugin Version">
 </div>  
 <br>
   
