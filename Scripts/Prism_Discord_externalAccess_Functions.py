@@ -9,7 +9,7 @@ from qtpy.QtWidgets import *
 
 from integration.discord_config import DiscordConfig
 from util.settings_ui import SettingsUI
-from util.dialogs import *
+from util.dialogs import InputDialog
 
 from PrismUtils.Decorators import err_catcher_plugin as err_catcher
 
@@ -77,7 +77,7 @@ class Prism_Discord_externalAccess_Functions(object):
         dialog = InputDialog(title="Enter your Discord Bot Token")
         dialog.exec_()
 
-        if dialog.result() == QDialog().Accepted:
+        if dialog.result() == QDialog.Accepted:
             token = dialog.get_input()
 
             config = self.discord_config.loadConfig("studio")
