@@ -43,37 +43,47 @@ class Prism_Discord_externalAccess_Functions(object):
     @err_catcher(name=__name__)
     def projectSettings_loadUI(self, origin):
         self.settings_ui.createDiscordProjectSettingsUI(origin, settings=None)
-        self.setStudioOptions(origin)
-        self.connectEvents(origin)
+        self.storeInterfaceComponents(origin)
+        self.setStudioOptions()
+        self.connectEvents()
+
+    @err_catcher(__name__)
+    def storeInterfaceComponents(self, origin):
+        self.le_discord_token = origin.le_discord_token
+        self.cb_notify_method = origin.cb_notify_method
+        self.cb_notify_user_pool = origin.cb_notify_user_pool
+        self.le_discord_server = origin.le_discord_server
+        self.b_discord_token = origin.b_discord_token
+        self.b_save_server_name = origin.b_save_server_name
 
     @err_catcher(name=__name__)
-    def setStudioOptions(self, origin):
+    def setStudioOptions(self):
         try:
-            self.checkToken(origin)
+            self.checkToken()
 
-            self.addNotificationMethods(origin)
-            self.checkNotificationMethod(origin)
-            self.addNotificationsUserPools(origin)
-            self.checkNotificationsUserPool(origin)
+            self.addNotificationMethods()
+            self.checkNotificationMethod()
+            self.addNotificationsUserPools()
+            self.checkNotificationsUserPool()
 
-            self.checkGuildName(origin)
+            self.checkGuildName()
 
         except Exception as e:
             self.core.popup(str(e))
 
     @err_catcher(name=__name__)
-    def connectEvents(self, origin):
-        origin.b_discord_token.clicked.connect(lambda: self.inputBotToken(origin))
-        origin.cb_notify_method.currentIndexChanged.connect(
-            lambda: self.saveNotificationMethod(origin)
+    def connectEvents(self):
+        self.b_discord_token.clicked.connect(lambda: self.inputBotToken())
+        self.cb_notify_method.currentIndexChanged.connect(
+            lambda: self.saveNotificationMethod()
         )
-        origin.cb_notify_user_pool.currentIndexChanged.connect(
-            lambda: self.saveNotificationsUserPool(origin)
+        self.cb_notify_user_pool.currentIndexChanged.connect(
+            lambda: self.saveNotificationsUserPool()
         )
-        origin.b_save_server_name.clicked.connect(lambda: self.saveGuildName(origin))
+        self.b_save_server_name.clicked.connect(lambda: self.saveGuildName())
 
     @err_catcher(name=__name__)
-    def inputBotToken(self, origin):
+    def inputBotToken(self):
         dialog = InputDialog(title="Enter your Discord Bot Token")
         dialog.exec_()
 
@@ -84,92 +94,92 @@ class Prism_Discord_externalAccess_Functions(object):
             self.discord_config.checkDiscordOptionsInConfig(config)
 
             config["discord"]["token"] = token
-            origin.le_discord_token.setText(token)
+            self.le_discord_token.setText(token)
 
             self.discord_config.saveConfigSetting(config, mode="studio")
 
     @err_catcher(name=__name__)
-    def checkToken(self, origin):
+    def checkToken(self):
         config = self.discord_config.loadConfig("studio")
         self.discord_config.checkDiscordOptionsInConfig(config)
 
         if "token" not in config["discord"]:
             config["discord"]["token"] = ""
-            origin.le_discord_token.setPlaceholderText("Enter your Discord Bot Token")
+            self.le_discord_token.setPlaceholderText("Enter your Discord Bot Token")
 
         token = config["discord"]["token"]
-        origin.le_discord_token.setText(token)
+        self.le_discord_token.setText(token)
 
     @err_catcher(name=__name__)
-    def addNotificationMethods(self, origin):
+    def addNotificationMethods(self, ):
         methods = ["", "Discord", "Prism Studio"]
 
-        origin.cb_notify_method.addItems(methods)
+        self.cb_notify_method.addItems(methods)
 
     @err_catcher(name=__name__)
-    def checkNotificationMethod(self, origin):
+    def checkNotificationMethod(self):
         config = self.discord_config.loadConfig("studio")
         self.discord_config.checkDiscordOptionsInConfig(config)
 
         method = config["discord"]["notifications"].get("method", "")
 
-        origin.cb_notify_method.setCurrentText(method)
+        self.cb_notify_method.setCurrentText(method)
 
     @err_catcher(name=__name__)
-    def saveNotificationMethod(self, origin):
+    def saveNotificationMethod(self):
         config = self.discord_config.loadConfig("studio")
         self.discord_config.checkDiscordOptionsInConfig(config)
 
-        method = origin.cb_notify_method.currentText()
+        method = self.cb_notify_method.currentText()
 
         config["discord"]["notifications"]["method"] = method
         self.discord_config.saveConfigSetting(config, mode="studio")
 
     @err_catcher(name=__name__)
-    def addNotificationsUserPools(self, origin):
+    def addNotificationsUserPools(self):
         user_pool = ["", "Discord", "Prism Studio"]
 
-        origin.cb_notify_user_pool.addItems(user_pool)
+        self.cb_notify_user_pool.addItems(user_pool)
 
     @err_catcher(name=__name__)
-    def checkNotificationsUserPool(self, origin):
+    def checkNotificationsUserPool(self):
         config = self.discord_config.loadConfig("studio")
         self.discord_config.checkDiscordOptionsInConfig(config)
 
         user_pool = config["discord"]["notifications"].get("user_pool", "")
 
-        origin.cb_notify_user_pool.setCurrentText(user_pool)
+        self.cb_notify_user_pool.setCurrentText(user_pool)
 
     @err_catcher(name=__name__)
-    def saveNotificationsUserPool(self, origin):
+    def saveNotificationsUserPool(self):
         config = self.discord_config.loadConfig("studio")
         self.discord_config.checkDiscordOptionsInConfig(config)
 
-        user_pool = origin.cb_notify_user_pool.currentText()
+        user_pool = self.cb_notify_user_pool.currentText()
 
         config["discord"]["notifications"]["user_pool"] = user_pool
         self.discord_config.saveConfigSetting(config, mode="studio")
 
     @err_catcher(name=__name__)
-    def checkGuildName(self, origin):
+    def checkGuildName(self):
         config = self.discord_config.loadConfig("studio")
         self.discord_config.checkDiscordOptionsInConfig(config)
 
         if "guild_name" not in config["discord"]["server"]:
             config["discord"]["server"]["guild_name"] = ""
-            origin.le_discord_server.setPlaceholderText(
+            self.le_discord_server.setPlaceholderText(
                 "Enter your Discord Server Name"
             )
 
         guild_name = config["discord"]["server"].get("guild_name", "")
-        origin.le_discord_server.setText(guild_name)
+        self.le_discord_server.setText(guild_name)
 
     @err_catcher(name=__name__)
-    def saveGuildName(self, origin):
+    def saveGuildName(self):
         config = self.discord_config.loadConfig("studio")
         self.discord_config.checkDiscordOptionsInConfig(config)
 
-        guild_name = origin.le_discord_server.text()
+        guild_name = self.le_discord_server.text()
 
         config["discord"]["server"]["guild_name"] = guild_name
         self.discord_config.saveConfigSetting(config, mode="studio")
