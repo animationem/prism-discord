@@ -1,7 +1,7 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/animationem/prism-discord/blob/main/Resources/prism_discord_logo_long_light_banner.png">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/animationem/prism-discord/blob/main/Resources/prism_discord_logo_long_dark_banner.png">
-  <img alt="Prism and discord branding" src="https://github.com/animationem/prism-discord/tree/main/Resources/prism_discord_logo_long_light_banner.png">
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/animationem/prism-discord/blob/main/Resources/prism_discord_logo_long_light_banner.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/animationem/prism-discord/blob/main/Resources/prism_discord_logo_long_dark_banner.svg">
+  <img alt="Prism and discord branding" src="https://github.com/animationem/prism-discord/tree/main/Resources/prism_discord_logo_long_light_banner.svg">
 </picture>  
   
 <div>
