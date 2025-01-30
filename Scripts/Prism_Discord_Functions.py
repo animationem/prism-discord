@@ -51,6 +51,10 @@ class Prism_Discord_Functions(object):
         self.core = core
         self.plugin = plugin
         self.discord_config = DiscordConfig(self.core)
+        self.token = self.getToken()
+        self.project = self.getProject()
+        self.guild_id = self.getGuildID(self.token)
+        self.channel_id = self.getChannelID(self.token, self.guild_id)
 
         self.core.registerCallback(
             "mediaPlayerContextMenuRequested",
@@ -85,11 +89,17 @@ class Prism_Discord_Functions(object):
     @err_catcher(name=__name__)
     def publishToDiscord(self, content):
         print("Publishing to Discord")
+        self.sendMessage(self.token, self.channel_id, content)
 
+    def getToken(self):
+        config = self.discord_config.loadConfig("studio")
+        return config["discord"]["token"]
 
-        token = None #Get the Access Token from the configuration file
-
-        #-----------------Get Guild ID -----------------
+    def getProject(self):
+        project = self.core.getConfig("globals", "project_name", configPath=self.core.prismIni)
+        return project
+        
+    def getGuildID(self, token):
         url = "https://discord.com/api/v10/users/@me/guilds"
         headers = {"Authorization": f"Bot {token}"}
 
@@ -100,19 +110,22 @@ class Prism_Discord_Functions(object):
             if d["name"] == "Prism for Discordo":
                 guild_id = d["id"]
 
-        #-----------------Get Channel ID -----------------
+        return guild_id
+
+    def getChannelID(self, token, guild_id):
         url = f"https://discord.com/api/v10/guilds/{guild_id}/channels"
+        headers = {"Authorization": f"Bot {token}"}
         response = requests.get(url, headers=headers)
         data = response.json()
 
         for d in data:
             if d.get("name") == "Text Channels":
                 t_id = d["id"]
-            
+                
             if d.get("name") == "test" and d.get("parent_id") == t_id:
                 channel_id = d["id"]
 
-        #-----------------Send Message -----------------
+    def sendMessage(self, token, channel_id, content):
         url = f"https://discord.com/api/v10/channels/{channel_id}/messages"
         headers = {"Authorization": f"Bot {token}", 'Content-Type': 'application/json'}
 
@@ -121,8 +134,6 @@ class Prism_Discord_Functions(object):
         files = {'file': open(content, 'rb')}
         project = self.core.getConfig("globals", "project_name", configPath=self.core.prismIni)
 
-
-
         # Prep payload with an embed
         payload = {
             "content": "hey",
@@ -130,25 +141,15 @@ class Prism_Discord_Functions(object):
                 {
                     "title": project,  # Use the project name as the title
                     "image": {
-                        "url": f"attachment://{files}"
+                        "url":  "attachment://{files}"  # Use the file as the image
                     },
-                    "description": "ur cooked\nDimensions: 1920x1080",
+                    "description": "This is a test message",
                     "color": 16711680,
                 }
             ]
         }
 
         response = requests.post(url, headers=headers, files=files, data={"payload_json": json.dumps(payload)})
-        
-        # Steps for Jessica -------
-        # Remember to break them into functions, and return the appropriate information
-        # 1. Get the Access Token
-        # 2. Get the Current Project
-        # 3. Get the Guild ID
-        # 4. Get the Channel ID
-        # 5. Send the message with the file
-        #--------------------------
-
 
         # Print the response
         print(response.status_code)

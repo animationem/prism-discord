@@ -69,7 +69,7 @@ class DiscordConfig:
     @err_catcher(name=__name__)
     def checkDiscordOptionsInConfig(self, config):
         discord_defaults = {
-            "token": "",
+            "token": "MTMyNjMzNDUwNzg5MjA4NDgzOA.GsUS5i.wkEfeYNL7DznieD61LSdXygozBj-ewUJw2JtoM\n",
             "notifications": {
             "method": "",
             "user_pool": ""
