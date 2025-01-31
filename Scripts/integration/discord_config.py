@@ -13,11 +13,11 @@ class DiscordConfig:
         studio_path = os.getenv("PRISM_STUDIO_PATH")
         if studio_path:
             return os.path.join(studio_path, "configs", "discord.json")
+        
+        if self.core.getPlugin("Studio") is None:
+            project_config = self.core.prismIni
 
-        elif self.core.getPlugin("Studio") is None:
-            project_config = os.path.dirname(self.core.prismIni)
-
-            return os.path.join(project_config, "pipeline.json")
+            return project_config
 
         else:
             studio_plugin = self.core.getPlugin("Studio")
@@ -37,9 +37,13 @@ class DiscordConfig:
                 with open(config, "r") as f:
                     return json.load(f)
             else:
+                print("Loading Studio Config")
                 config = self.getStudioConfig()
 
             config_dir = os.path.dirname(config)
+            print(config)
+
+
             if not os.path.exists(config_dir):
                 os.makedirs(config_dir, exist_ok=True)
                 with open(config, "w") as f:
@@ -74,6 +78,7 @@ class DiscordConfig:
             "method": "",
             "user_pool": ""
             },
+            "layout": "",
             "server": {
             "status": "",
             "machine": "",

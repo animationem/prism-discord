@@ -35,6 +35,7 @@ import os
 import requests
 import json
 
+from pprint import pprint
 
 from qtpy.QtCore import *
 from qtpy.QtGui import *
@@ -51,10 +52,6 @@ class Prism_Discord_Functions(object):
         self.core = core
         self.plugin = plugin
         self.discord_config = DiscordConfig(self.core)
-        self.token = self.getToken()
-        self.project = self.getProject()
-        self.guild_id = self.getGuildID(self.token)
-        self.channel_id = self.getChannelID( self.token, self.guild_id)
 
         self.core.registerCallback(
             "mediaPlayerContextMenuRequested",
@@ -86,24 +83,31 @@ class Prism_Discord_Functions(object):
         menu.insertAction(menu.actions()[-1], discord_action)
         discord_action.setIcon(icon)
 
+    #-----------------Publish Content to Discord-----------------
     @err_catcher(name=__name__)
     def publishToDiscord(self, content):
+        token = self.getToken()
+        guild_id = self.getGuildID(token)
+        channel_id = self.getChannelID(token, guild_id)
         
         print("Publishing to Discord")
-        self.sendMessage(self.token, self.channel_id, content)
+        self.sendMessage(token, channel_id, content)
 
-
+    #-----------------Get Bot Token-----------------
+    @err_catcher(name=__name__)
     def getToken(self):
         config = self.discord_config.loadConfig("studio")
         token = config["discord"]["token"]
         return token
 
+    #-----------------Get Current Project-----------------
+    @err_catcher(name=__name__)
     def getProject(self):
         project = self.core.getConfig("globals", "project_name", configPath=self.core.prismIni)
         return project
             
     #-----------------Get Guild ID -----------------
-
+    @err_catcher(name=__name__)
     def getGuildID(self, token):
         url = "https://discord.com/api/v10/users/@me/guilds"
         headers = {"Authorization": f"Bot {token}"}
@@ -112,12 +116,14 @@ class Prism_Discord_Functions(object):
         data = response.json()
 
         for d in data:
+            pprint(d)
             if d["name"] == "Prism for Discordo":
                 guild_id = d["id"]
 
         return guild_id
 
     #-----------------Get Channel ID -----------------
+    @err_catcher(name=__name__)
     def getChannelID(self, token, guild_id):
         url = f"https://discord.com/api/v10/guilds/{guild_id}/channels"
         headers = {"Authorization": f"Bot {token}"}
@@ -133,25 +139,21 @@ class Prism_Discord_Functions(object):
         
         return channel_id
 
-        
     #-----------------Send Message -----------------
+    @err_catcher(name=__name__)
     def sendMessage(self, token, channel_id, content):
         url = f"https://discord.com/api/v10/channels/{channel_id}/messages"
         headers = {"Authorization": f"Bot {token}"}
-        #headers = {"Authorization": f"Bot {token}", 'Content-Type': 'application/json'}
-
-        # Prep File
     
         files = {'file': (os.path.basename(content), open(content, 'rb'))}
 
-        #project = self.core.getConfig("globals", "project_name", configPath=self.core.prismIni)
+        project = self.core.getConfig("globals", "project_name", configPath=self.core.prismIni)
 
-        # Prep payload with an embed
         payload = {
             "content": "hey",
             "embeds": [
                 {
-                    "title": "PLEASE WORK",  # Use the project name as the title
+                    "title": project,  # Use the project name as the title
                     "video": {
                         "url": f"attachment://{os.path.basename(content)}"  # Use the file as the image
                     },
@@ -162,10 +164,6 @@ class Prism_Discord_Functions(object):
         }
 
         response = requests.post(url, headers=headers, files=files, data={"payload_json": json.dumps(payload)})
-
-        # Print the response
-        print(response.status_code)
-        print(response.json())
 
         # Check if the message was sent successfully
         if response.status_code == 200:
